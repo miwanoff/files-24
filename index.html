@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="file" id="files" name="files[]" multiple />
+    <output id="list"></output>
+
+    <script>
+      //   function handleFileSelect(evt) {
+      //     let files = evt.target.files; // объект FileList файловых объектов File
+      //     let output = [];
+      //     for (let i = 0, f; (f = files[i]); i++) {
+      //       output.push(
+      //         "<li>Имя файла: ",
+      //         f.name,
+      //         ", тип файла: ",
+      //         f.type,
+      //         ", размер файла: ",
+      //         f.size,
+      //         "байт, дата последнего изменения: ",
+      //         f.lastModifiedDate.toLocaleDateString(),
+      //         "</li>"
+      //       );
+      //     }
+      //     document.getElementById("list").innerHTML =
+      //       "<ul>" + output.join("") + "</ul>";
+      //   }
+
+      function handleFileSelect(evt) {
+        let files = evt.target.files; // объект FileList
+        // Цикл по FileList и представление файлов-изображений
+        for (let i = 0, f; (f = files[i]); i++) {
+          // Только для изображений
+          if (!f.type.match("image.*")) {
+            continue;
+          }
+          let reader = new FileReader();
+          reader.onload = (function (theFile) {
+            return function (e) {
+              // Представление изображения
+              let span = document.createElement("span");
+              span.innerHTML = [
+                '<img src="',
+                e.target.result,
+                '" title="',
+                escape(theFile.name),
+                '"/>',
+              ].join("");
+              document.getElementById("list").insertBefore(span, null);
+            };
+          })(f);
+          // Чтение файла изображения как URL
+          reader.readAsDataURL(f);
+        }
+      }
+      //прослушивание события изменения элемента <input  type="file">
+      document
+        .getElementById("files")
+        .addEventListener("change", handleFileSelect, false);
+    </script>
+  </body>
+</html>
